@@ -44,9 +44,9 @@ module Mold
       @output << Tagz { input_(attributes){} } + "\n"
     end
 
-    def select(field, choices = [], options = {})
+    def select(field, choices = {}, options = {})
       attributes = attributes(field, options)
-      @output << Tagz { select_(attributes){ } } + "\n"
+      @output << Tagz { select_(attributes){ choices.each { |value,text| option_(:value => value){ text } } } } + "\n"
 
     end
 
