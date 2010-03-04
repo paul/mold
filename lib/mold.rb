@@ -38,6 +38,11 @@ module Mold
       nest(objects, options.merge(:many => true), &block)
     end
 
+    def label(field, options = {})
+      attributes = options.dup.merge(:for => field_id(field))
+      @output << Tagz { label_(attributes){} } + "\n"
+    end
+
     def input(field, options = {})
       options[:type] ||= :text
       attributes = attributes(field, options)

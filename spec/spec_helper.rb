@@ -7,19 +7,38 @@ require 'pp'
 
 require 'haml'
 require 'tilt'
-require 'webrat'#/core/matchers'
+require 'nokogiri'
+require 'webrat/core/matchers'
 
-Spec::Runner.configure do |config|
-
-  config.include Webrat::Matchers
-  config.include Webrat::HaveTagMatcher
+module RenderHelpers
 
   class RenderContext
     include Mold::Helpers
   end
 
-  config.before do
+  def render(file = nil, &block)
     @context = RenderContext.new
+
+    if file
+      path = File.expand_path("fixtures/#{file}", File.dirname(__FILE__))
+      @template = Tilt::HamlTemplate.new(path, :format => :html5)
+    else
+      @template = Tilt::HamlTemplate.new(&block)
+    end
+    @output = @template.render(@context)
   end
-  
+
+  def output
+    @output
+  end
+
 end
+
+Spec::Runner.configure do |config|
+
+  config.include Webrat::Matchers
+  config.include Webrat::HaveTagMatcher
+  config.include RenderHelpers
+
+end
+
