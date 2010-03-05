@@ -52,11 +52,19 @@ module Mold
     def select(field, choices = {}, options = {})
       attributes = attributes(field, options)
       @output << Tagz { select_(attributes){ choices.each { |value,text| option_(:value => value){ text } } } } + "\n"
+    end
 
+    def form(&block)
+      attributes = @options
+      Tagz { form_(attributes, &block) }
     end
 
     def to_html
-      @output
+      if @parent.nil?
+        form{ @output }
+      else
+        @output
+      end
     end
 
     def attributes(field, options = {})

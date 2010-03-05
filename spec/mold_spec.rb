@@ -12,18 +12,14 @@ describe "Mold" do
     }
   end
 
-  it 'should have a top-level name' do
-    output.should have_tag(:input, :name => "person[name]")
+  it "should have a form" do
+    output.should have_tag(:form)
   end
 
-  it 'should have a top-level id' do
-    output.should have_tag(:input, :id => "person_name")
+  it "should have a label and input" do
+    it_should_have_label_and_input(:name => "person[name]",
+                                   :id   => "person_name")
   end
-
-  it 'should have a label' do
-    output.should have_tag(:label, :for => "person_name")
-  end
-
 
 
 end
