@@ -3,11 +3,13 @@ require File.expand_path('spec_helper', File.dirname(__FILE__))
 describe "Mold" do
 
   before do
-    render("person_form.html.haml")
-  end
-
-  it 'should work' do
-    output.should be_a(String)
+    render {
+      <<-HAML.gsub(/^ {8}/, '')
+        = mold :person do |form|
+          = form.label :name
+          = form.input :name
+      HAML
+    }
   end
 
   it 'should have a top-level name' do
