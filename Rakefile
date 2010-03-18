@@ -1,10 +1,13 @@
 require 'rubygems'
 require 'rake'
 
+require 'lib/mold'
+
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "mold"
+    gem.version = Mold::Version
     gem.summary = %Q{A less annoying form builder}
     gem.description = %Q{A less annoying form builder}
     gem.email = "psadauskas@gmail.com"
