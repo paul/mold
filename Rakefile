@@ -13,6 +13,9 @@ begin
     gem.email = "psadauskas@gmail.com"
     gem.homepage = "http://github.com/paul/mold"
     gem.authors = ["Paul Sadauskas"]
+
+    gem.add_dependency "tagz"
+
     gem.add_development_dependency "rspec", ">= 1.2.9"
     gem.add_development_dependency "yard", ">= 0"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
