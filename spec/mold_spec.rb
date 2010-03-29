@@ -21,5 +21,15 @@ describe "Mold" do
                                    :id   => "person_name")
   end
 
+  describe "complex form" do
+    before do 
+      render "person_form.html.haml"
+    end
+
+    it 'should work' do
+      #puts @output
+    end
+  end
+
 
 end

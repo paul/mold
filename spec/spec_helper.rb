@@ -23,7 +23,7 @@ module RenderHelpers
       path = File.expand_path("fixtures/#{file}", File.dirname(__FILE__))
       @template = Tilt::HamlTemplate.new(path, :format => :html5)
     else
-      @template = Tilt::HamlTemplate.new(&block)
+      @template = Tilt::HamlTemplate.new(:format => :html5, &block)
     end
     @output = @template.render(@context)
   end

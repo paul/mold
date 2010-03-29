@@ -1,17 +1,34 @@
+!!!
+%title Person Form
 
 = mold :person do |form|
 
-  = form.label :name
-  = form.input :name
+  %dl
+    %dt= form.label :name
+    %dd= form.input :name
 
-  = form.nest :spouse do |spouse_form|
-    = spouse_form.input :name
+  %fieldset
+    %legend Spouse
 
-  = form.nest_many :children do |child_form|
+    %dl
+      = form.nest :spouse do |spouse_form|
+        %dt= form.label :name
+        %dd= spouse_form.input :name
 
-    = child_form.input :name
-    = child_form.input :age, :type => :numeric
+  %fieldset 
+    %legend Children
 
-    = child_form.nest_many :pets do |pet_form|
-      = pet_form.input :name
-      = pet_form.select :species, {:dog => "Dog", :cat => "Cat"}
+    %dl
+      = form.nest_many :children do |child_form|
+
+        %dt= child_form.label :name
+        %dd= child_form.input :name
+
+        %dt= child_form.label :age
+        %dd= child_form.input :age, :type => :numeric
+
+        %dt= child_form.label :pets
+        = child_form.nest_many :pets do |pet_form|
+          %dd
+            = pet_form.input :name
+            = pet_form.select :species, {:dog => "Dog", :cat => "Cat"}
