@@ -1,7 +1,7 @@
 require 'rubygems'
 require 'rake'
 
-require 'lib/mold'
+require './lib/mold'
 
 begin
   require 'jeweler'
@@ -14,10 +14,17 @@ begin
     gem.homepage = "http://github.com/paul/mold"
     gem.authors = ["Paul Sadauskas"]
 
-    gem.add_dependency "tagz"
+    gem.add_dependency "haml"
+    gem.add_dependency "options"
+    gem.add_dependency "tilt"
+
+
+    gem.add_development_dependency "nokogiri"
+    gem.add_development_dependency "webrat"
 
     gem.add_development_dependency "rspec", ">= 1.2.9"
     gem.add_development_dependency "yard", ">= 0"
+    gem.add_development_dependency "jeweler", ">= 0"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new
