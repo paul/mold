@@ -6,7 +6,7 @@ require 'mold/helpers'
 require 'mold/field'
 
 module Mold
-  Version = VERSION = "0.1.0"
+  Version = VERSION = "0.2.0"
 
   def version
     Version
