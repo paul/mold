@@ -7,8 +7,11 @@ module Mold
     attr_reader :name, :binding
 
     def initialize(name_or_object, binding, options = {}, &block)
-      @name = extract_name(name_or_object, options)
       @binding = binding
+
+      @name = extract_name(name_or_object, options)
+      @object = extract_object(name_or_object, options)
+
       @parent = options[:parent_builder]
       @code = block
 
@@ -34,7 +37,9 @@ module Mold
     end
 
     def nest_many(objects, options = {}, &block)
-      nest(objects, options.merge(:many => true), &block)
+      [objects].flatten.map do |object|
+        nest(object, options.merge(:many => true), &block)
+      end.join
     end
 
     def label(field, text = field, options = {})
@@ -80,6 +85,10 @@ module Mold
         :id   => field_id(field)
       }
 
+      if !options[:value] && @object.respond_to?(field)
+        attributes[:value] = @object.send(field)
+      end
+
       attributes.merge(options)
     end
 
@@ -90,7 +99,9 @@ module Mold
     def name_prefix
       if @parent
         prefix = "#{@parent.name_prefix}[#{name}]"
-        prefix << "[]" if @options[:many]
+        if @options[:many]
+          prefix << (@object.respond_to?(:id) ? "[#{@object.id}]" : "[]")
+        end
         prefix
       else
         name
@@ -119,6 +130,17 @@ module Mold
         ActiveSupport::Inflector.underscore(name_or_object.class.name)
       end
 
+    end
+
+    def extract_object(name_or_object, options)
+      return object if object = options[:object]
+
+      case name_or_object
+      when String, Symbol
+        nil
+      else
+        name_or_object
+      end
     end
 
 
