@@ -12,12 +12,10 @@ require 'webrat/core/matchers'
 
 module RenderHelpers
 
-  class RenderContext
-    include Mold::Helpers
-  end
+  include Mold::Helpers
 
   def render(file = nil, &block)
-    @context = RenderContext.new
+    @context = self
 
     if file
       path = File.expand_path("fixtures/#{file}", File.dirname(__FILE__))

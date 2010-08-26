@@ -1,6 +1,7 @@
 GEM
   remote: http://rubygems.org/
   specs:
+    activesupport (3.0.0.rc2)
     gemcutter (0.6.1)
     git (1.2.5)
     haml (3.0.17)
@@ -29,6 +30,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  activesupport (>= 3.0.0.rc2)
   haml
   jeweler
   nokogiri

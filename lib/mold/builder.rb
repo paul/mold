@@ -1,12 +1,13 @@
 require 'haml'
+require 'active_support/inflector/methods'
 
 module Mold
   class Builder
 
     attr_reader :name, :binding
 
-    def initialize(object, binding, options = {}, &block)
-      @name = object
+    def initialize(name_or_object, binding, options = {}, &block)
+      @name = extract_name(name_or_object, options)
       @binding = binding
       @parent = options[:parent_builder]
       @code = block
@@ -107,6 +108,19 @@ module Mold
         name
       end
     end
+
+    def extract_name(name_or_object, options)
+      return name if name = options[:name]
+
+      case name_or_object
+      when String, Symbol
+        name_or_object
+      else
+        ActiveSupport::Inflector.underscore(name_or_object.class.name)
+      end
+
+    end
+
 
   end
 end

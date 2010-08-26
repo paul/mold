@@ -4,7 +4,7 @@ describe "Mold with values" do
 
   describe "text fields" do
     before do
-      render_haml(%Q{
+      render_haml(%{
         = mold :person do |form|
           = form.input :name, :value => "Paul"
       })
@@ -17,7 +17,7 @@ describe "Mold with values" do
 
   describe "textarea fields" do
     before do
-      render_haml(%Q{
+      render_haml(%{
         = mold :person do |form|
           = form.textarea :name, :value => "Paul"
       })
@@ -27,6 +27,7 @@ describe "Mold with values" do
       output.should have_tag(:textarea, :content => "Paul")
     end
   end
+
   describe "select fields" do
     before do
       render_haml(%Q{
@@ -37,6 +38,7 @@ describe "Mold with values" do
 
     it "should set the option as selected" do
       output.should have_tag(:option, :value => "paul", :selected => "selected")
+      output.should_not have_tag(:option, :value => "bob", :selected => "selected")
     end
   end
 end

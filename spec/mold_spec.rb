@@ -22,7 +22,7 @@ describe "Mold" do
   end
 
   describe "complex form" do
-    before do 
+    before do
       render "person_form.html.haml"
     end
 
@@ -31,5 +31,37 @@ describe "Mold" do
     end
   end
 
+  describe 'form name' do
+
+    class NamedPerson # Works like ActiveModel
+      def self.name
+        "person"
+      end
+    end
+
+    class Person
+
+    end
+
+    [
+      "person",
+      :person,
+      NamedPerson.new,
+      Person.new
+    ].each do |person|
+      it "should work with a #{person.class}" do
+        @person = person
+        render_haml(%{
+          = mold @person do |form|
+            = form.label :name
+            = form.input :name
+        })
+
+        output.should have_tag(:form, :name => "person")
+      end
+
+    end
+
+  end
 
 end
