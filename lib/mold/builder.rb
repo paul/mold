@@ -9,8 +9,11 @@ module Mold
       @name = object
       @binding = binding
       @parent = options[:parent_builder]
-      @options = options
       @code = block
+
+      form_id = "#{@name}_form"
+      @options = { :name => @name, :id => form_id, :method => "POST" }
+      @options.merge!(options)
     end
 
     def to_html
@@ -44,16 +47,25 @@ module Mold
     end
 
     def select(field, choices = {}, options = {})
+      selected_value = options.delete(:value)
       attributes = attributes(field, options)
-      binding.capture_haml { binding.haml_tag :select, attributes do 
-        choices.each { |value,text| binding.haml_tag :option, text, :value => value }
+      binding.capture_haml { binding.haml_tag :select, attributes do
+        choices.each { |value,text|
+          option_attributes = {:value => value}
+          option_attributes.merge!(:selected => :selected) if value == selected_value
+          binding.haml_tag :option, text, option_attributes
+        }
       end
       }
     end
 
     def textarea(field, options = {})
+      value = options.delete(:value)
       attributes = attributes(field, options)
-      binding.capture_haml { binding.haml_tag :textarea, attributes }
+      binding.capture_haml { binding.haml_tag :textarea, attributes do
+        binding.haml_concat value
+      end
+      }
     end
 
     def button(name, text, options = {})

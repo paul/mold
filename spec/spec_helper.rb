@@ -28,6 +28,17 @@ module RenderHelpers
     @output = @template.render(@context)
   end
 
+  def render_haml(content)
+    render {
+      strip_indents(content)
+    }
+  end
+
+  def strip_indents(string)
+    i = string.index(/[^\s]/)
+    string.gsub(/^ {#{i-1}}/, '')
+  end
+
   def output
     @output
   end
