@@ -24,10 +24,10 @@ module Mold
       binding.capture_haml do
         if @parent.nil?
           binding.haml_tag :form, @options do
-            @code.call(self)
+            @code.call(self, @object)
           end
         else
-          @code.call(self)
+          @code.call(self, @object)
         end
       end
     end

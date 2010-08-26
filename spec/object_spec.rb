@@ -52,7 +52,8 @@ describe "Mold" do
       before do
         render_haml(%{
           = mold @bar do |form|
-            = form.nest(@bar.address) do |address_form|
+            = form.nest(@bar.address) do |address_form, address|
+              %p= address.street
               = address_form.input :street
         })
       end
@@ -61,13 +62,18 @@ describe "Mold" do
         output.should have_tag(:input, :name => "bar[address][street]", :value => @bar.address.street)
       end
 
+      it 'should yield the object to the block as the second argument' do
+        output.should have_tag(:p, :content => @bar.address.street)
+      end
+
     end
 
     describe 'nest many' do
       before do
         render_haml(%{
           = mold @bar do |form|
-            = form.nest_many(@bar.beers) do |beer_form|
+            = form.nest_many(@bar.beers) do |beer_form, beer|
+              %p= beer.name
               = beer_form.input :name
         })
       end
@@ -77,6 +83,13 @@ describe "Mold" do
           output.should have_tag(:input, :name => "bar[beer][#{beer.id}][name]", :value => beer.name)
         end
       end
+
+      it 'should yield the object to the block as the second argument' do
+        @bar.beers.each do |beer|
+          output.should have_tag(:p, :content => beer.name)
+        end
+      end
+
 
     end
   end
