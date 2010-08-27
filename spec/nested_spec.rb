@@ -6,12 +6,12 @@ describe "Nested" do
 
     before do
       render {
-        <<-HAML.gsub(/^ {10}/, '')
-          = mold :person do |form|
-            = form.nest :spouse do |spouse_form|
-              = spouse_form.label :name
-              = spouse_form.input :name
-        HAML
+        mold :person do |form|
+          form.nest :spouse do |spouse_form|
+            spouse_form.label(:name) +
+            spouse_form.input(:name)
+          end
+        end
       }
     end
 
@@ -25,12 +25,12 @@ describe "Nested" do
   describe "Many" do
     before do
       render {
-        <<-HAML.gsub(/^ {10}/, '')
-          = mold :person do |form|
-            = form.nest_many :children do |child_form|
-              = child_form.label :name
-              = child_form.input :name
-        HAML
+        mold :person do |form|
+          form.nest_many :children do |child_form|
+            child_form.label(:name) +
+            child_form.input(:name)
+          end
+        end
       }
     end
 
@@ -44,13 +44,14 @@ describe "Nested" do
 
     before do
       render {
-        <<-HAML.gsub(/^ {10}/, '')
-          = mold :person do |form|
-            = form.nest_many :children do |child_form|
-              = child_form.nest_many :pets do |pet_form|
-                = pet_form.label :name
-                = pet_form.input :name
-        HAML
+        mold :person do |form|
+          form.nest_many :children do |child_form|
+            child_form.nest_many :pets do |pet_form|
+              pet_form.label(:name) +
+              pet_form.input(:name)
+            end
+          end
+        end
       }
     end
 

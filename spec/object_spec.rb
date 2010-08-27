@@ -38,10 +38,11 @@ describe "Mold" do
     before do
       @bar = Bar.new
 
-      render_haml(%{
-        = mold @bar do |form|
-          = form.input :name
-      })
+      render {
+        mold @bar do |form|
+          form.input :name
+        end
+      }
     end
 
     it 'should have a text input' do
@@ -50,12 +51,14 @@ describe "Mold" do
 
     describe 'nest one' do
       before do
-        render_haml(%{
-          = mold @bar do |form|
-            = form.nest(@bar.address) do |address_form, address|
-              %p= address.street
-              = address_form.input :street
-        })
+        render {
+          mold @bar do |form|
+            form.nest(@bar.address) do |address_form, address|
+              "<p>" + address.street + "</p>" +
+              address_form.input(:street)
+            end
+          end
+        }
       end
 
       it 'should have a text input' do
@@ -70,12 +73,14 @@ describe "Mold" do
 
     describe 'nest many' do
       before do
-        render_haml(%{
-          = mold @bar do |form|
-            = form.nest_many(@bar.beers) do |beer_form, beer|
-              %p= beer.name
-              = beer_form.input :name
-        })
+        render{
+          mold @bar do |form|
+            form.nest_many(@bar.beers) do |beer_form, beer|
+              "<p>" + beer.name + "</p>" +
+              beer_form.input(:name)
+            end
+          end
+        }
       end
 
       it 'should have a text input' do

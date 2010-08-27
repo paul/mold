@@ -5,8 +5,8 @@ require 'spec'
 require 'spec/autorun'
 require 'pp'
 
-require 'haml'
-require 'tilt'
+#require 'haml'
+#require 'tilt'
 require 'nokogiri'
 require 'webrat/core/matchers'
 
@@ -14,27 +14,12 @@ module RenderHelpers
 
   include Mold::Helpers
 
-  def render(file = nil, &block)
-    @context = self
-
-    if file
-      path = File.expand_path("fixtures/#{file}", File.dirname(__FILE__))
-      @template = Tilt::HamlTemplate.new(path, :format => :html5)
+  def render(stuff = nil, &b)
+    if block_given?
+      @output = instance_eval(&b)
     else
-      @template = Tilt::HamlTemplate.new(:format => :html5, &block)
+      @output = stuff
     end
-    @output = @template.render(@context)
-  end
-
-  def render_haml(content)
-    render {
-      strip_indents(content)
-    }
-  end
-
-  def strip_indents(string)
-    i = string.index(/[^\s]/)
-    string.gsub(/^ {#{i-1}}/, '')
   end
 
   def output

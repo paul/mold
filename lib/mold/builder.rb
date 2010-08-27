@@ -1,8 +1,9 @@
-require 'haml'
+require 'tagz'
 require 'active_support/inflector/methods'
 
 module Mold
   class Builder
+    include Tagz
 
     attr_reader :name, :binding
 
@@ -21,15 +22,15 @@ module Mold
     end
 
     def to_html
-      binding.capture_haml do
         if @parent.nil?
-          binding.haml_tag :form, @options do
-            @code.call(self, @object)
+          tagz do
+            form_(@options) do
+              @code.call(self, @object) if @code
+            end
           end
         else
-          @code.call(self, @object)
+          @code.call(self, @object) if @code
         end
-      end
     end
 
     def nest(object, options = {}, &block)
@@ -44,39 +45,45 @@ module Mold
 
     def label(field, text = field, options = {})
       attributes = options.dup.merge(:for => field_id(field))
-      binding.capture_haml { binding.haml_tag :label, text, attributes }
+      tagz do
+        label_(attributes) { text }
+      end
     end
 
     def input(field, options = {})
       attributes = attributes(field, options)
-      binding.capture_haml { binding.haml_tag :input, attributes }
+      tagz do
+        input_(attributes)
+      end
     end
 
     def select(field, choices = {}, options = {})
       selected_value = options.delete(:value)
       attributes = attributes(field, options)
-      binding.capture_haml { binding.haml_tag :select, attributes do
-        choices.each { |value,text|
-          option_attributes = {:value => value}
-          option_attributes.merge!(:selected => :selected) if value == selected_value
-          binding.haml_tag :option, text, option_attributes
-        }
+      tagz do
+        select_(attributes) do
+          choices.each { |value,text|
+            option_attributes = {:value => value}
+            option_attributes.merge!(:selected => :selected) if value == selected_value
+            option_(option_attributes) { text }
+          }
+        end
       end
-      }
     end
 
     def textarea(field, options = {})
       value = options.delete(:value)
       attributes = attributes(field, options)
-      binding.capture_haml { binding.haml_tag :textarea, attributes do
-        binding.haml_concat value
+      tagz do
+        textarea_(attributes) { value }
       end
-      }
     end
 
     def button(name, text, options = {})
       attributes = {:name => name}.merge(options)
-      binding.capture_haml { binding.haml_tag :button, text, attributes }
+      tagz do
+        button_(attributes){text}
+      end
     end
 
     def attributes(field, options = {})

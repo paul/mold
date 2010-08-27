@@ -1,9 +1,8 @@
 # A sample Gemfile
 source :gemcutter
 
-gem "haml"
+gem "tagz"
 gem "options"
-gem "tilt"
 gem "activesupport", ">=3.0.0.rc2"
 
 group :dev do
@@ -12,5 +11,9 @@ group :dev do
   gem "rake"
   gem "nokogiri"
   gem "webrat"
+  gem "tilt"
   gem "jeweler"
+
+  gem "haml"
+  gem "erubis"
 end
