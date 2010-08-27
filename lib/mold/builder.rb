@@ -100,7 +100,7 @@ module Mold
       if @parent
         prefix = "#{@parent.name_prefix}[#{name}]"
         if @options[:many]
-          prefix << (@object.respond_to?(:id) ? "[#{@object.id}]" : "[]")
+          prefix << (@object && @object.respond_to?(:id) ? "[#{@object.id}]" : "[]")
         end
         prefix
       else

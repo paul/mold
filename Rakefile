@@ -16,11 +16,11 @@ begin
 
     gem.add_dependency "haml"
     gem.add_dependency "options"
-    gem.add_dependency "tilt"
 
 
     gem.add_development_dependency "nokogiri"
     gem.add_development_dependency "webrat"
+    gem.add_development_dependency "tilt"
 
     gem.add_development_dependency "rspec", ">= 1.2.9"
     gem.add_development_dependency "yard", ">= 0"
