@@ -1,0 +1,23 @@
+!!!
+%html{:lang => :en}
+  %head
+    %meta{:charset => 'utf-8'}
+
+    %title Bar Form
+
+  %body
+    - mold @bar do |form, bar|
+      %p.bar= bar.name
+      = form.label :name
+      = form.input :name
+
+      - form.nest bar.address do |address_form, address|
+        %p.street= address.street
+        =address_form.label :street
+        =address_form.input :street
+
+      - form.nest_many bar.beers do |beer_form, beer|
+        %p.beer= beer.name
+        =beer_form.label :name
+        =beer_form.input :name
+

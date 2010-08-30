@@ -14,10 +14,12 @@ begin
     gem.homepage = "http://github.com/paul/mold"
     gem.authors = ["Paul Sadauskas"]
 
-    gem.add_dependency "haml"
+    gem.add_dependency "tagz"
     gem.add_dependency "options"
 
 
+    gem.add_development_dependency "haml"
+    gem.add_development_dependency "erubis"
     gem.add_development_dependency "nokogiri"
     gem.add_development_dependency "webrat"
     gem.add_development_dependency "tilt"

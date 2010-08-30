@@ -5,8 +5,9 @@ require 'spec'
 require 'spec/autorun'
 require 'pp'
 
-#require 'haml'
-#require 'tilt'
+require 'tilt'
+require 'haml'
+require 'erubis'
 require 'nokogiri'
 require 'webrat/core/matchers'
 
@@ -22,6 +23,20 @@ module RenderHelpers
     end
   end
 
+  def render_haml(file)
+    render_template(file, :haml)
+  end
+
+  def render_erb(file)
+    render_template(file, :erb)
+  end
+
+  def render_template(file, format)
+    file = File.join(File.dirname(__FILE__), 'fixtures', "#{file}.html.#{format}")
+    template = Tilt.new(file)
+    @output = template.render(self)
+  end
+
   def output
     @output
   end
@@ -30,17 +45,17 @@ module RenderHelpers
     @field_name = opts[:name]
     @field_id   = opts[:id]
 
-    output.should have_tag(:input, :name => @field_name)
-
-    output.should have_tag(:input, :id => @field_id)
-
-    output.should have_tag(:label, :for => @field_id)
-
+    output.should have_tag("form input[name='#{@field_name}']")
+    output.should have_tag("form input[id=#{@field_id}]")
+    output.should have_tag("form label[for=#{@field_id}]")
   end
 
 end
 
 Spec::Runner.configure do |config|
+
+  require File.join(File.dirname(__FILE__), 'fixtures', 'mold_objects')
+  config.include Spec::MoldObjects
 
   config.include Webrat::Matchers
   config.include Webrat::HaveTagMatcher

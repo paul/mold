@@ -5,8 +5,8 @@ describe "Mold" do
   before do
     render {
       mold :person do |f|
-        f.label :name
-        f.input :name
+        f.label(:name) +
+        f.input(:name)
       end
     }
   end

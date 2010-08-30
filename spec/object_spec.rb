@@ -2,37 +2,6 @@ require File.expand_path('spec_helper', File.dirname(__FILE__))
 
 describe "Mold" do
 
-  class Bar
-    def name
-      "Melody Inn"
-    end
-
-    def beers
-      [
-        Beer.new(1, "Neversummer Ale"),
-        Beer.new(2, "Dale's Pale Ale")
-      ]
-    end
-
-    def address
-      Address.new
-    end
-  end
-
-  class Beer
-    attr_accessor :id, :name
-
-    def initialize(id, name)
-      @id, @name = id, name
-    end
-  end
-
-  class Address
-    def street
-      "N Illinois St"
-    end
-  end
-
   describe "from an object" do
 
     before do

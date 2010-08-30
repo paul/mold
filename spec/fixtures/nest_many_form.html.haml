@@ -1,0 +1,19 @@
+!!!
+%html{:lang => :en}
+  %head
+    %meta{:charset => 'utf-8'}
+
+    %title Person Form
+
+  %body
+    - mold @person do |form|
+      %p.test Testing block
+      = form.label :name
+      = form.input :name
+
+      - form.nest : do |nested|
+        %p.test-inner Testing inner form
+        =nested.label :inner
+        =nested.input :inner
+
+
