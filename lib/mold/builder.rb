@@ -1,5 +1,5 @@
 require 'options'
-require 'tagz'
+require 'haml'
 
 require 'active_support/inflector/methods'
 
@@ -13,15 +13,15 @@ module Mold
       @binding = binding
 
       args, options = Options.parse(args)
-
-      #@name = extract_name(name_or_object, options)
-      #@object = extract_object(name_or_object, options)
+      @name, @object = name_and_object_from(args.first, options) if args.first
 
       @parent = options[:parent_builder]
       @code = block
 
-      #form_id = "#{@name}_form"
       @options = { :method => "POST" }
+      form_id = "#{@name}_form" if @name
+      @options[:form_id] = form_id if form_id
+
       @options.merge!(options)
       @options[:method] = @options[:method].to_s.upcase
     end
@@ -30,9 +30,13 @@ module Mold
       content = capture_html(self, @object, &@code) if @code
 
       if @parent.nil?
-        tag(:form, @options, content)
+        capture_html do
+          tag(:form, @options) do
+            concat_content(content)
+          end
+        end
       else
-        @code.call(self, @object) if @code
+        concat_content(content)
       end
     end
     alias to_s to_html
@@ -40,7 +44,7 @@ module Mold
     def nest(object, options = {}, &block)
       nest_many(object, options = {}, &block) if object.is_a?(Array)
 
-      self.class.new(object, binding, options.merge(:parent_builder => self), &block).to_html
+      self.class.new(binding, object, options.merge(:parent_builder => self), &block).to_html
     end
 
     def nest_many(objects, options = {}, &block)
@@ -51,7 +55,7 @@ module Mold
 
     def label(field, text = field, options = {})
       attributes = options.dup.merge(:for => field_id(field))
-      tag(:label, attributes, text)
+      tag(:label, text, attributes)
     end
 
     def input(field, options = {})
@@ -62,13 +66,11 @@ module Mold
     def select(field, choices = {}, options = {})
       selected_value = options.delete(:value)
       attributes = attributes(field, options)
-      tagz do
-        select_(attributes) do
-          choices.each { |value,text|
-            option_attributes = {:value => value}
-            option_attributes.merge!(:selected => :selected) if value == selected_value
-            option_(option_attributes) { text }
-          }
+      tag(:select, attributes) do
+        choices.each do |value,text|
+          option_attributes = {:value => value}
+          option_attributes.merge!(:selected => :selected) if value == selected_value
+          tag(:option, text, option_attributes)
         end
       end
     end
@@ -76,16 +78,12 @@ module Mold
     def textarea(field, options = {})
       attributes = attributes(field, options)
       value = attributes.delete(:value)
-      tagz do
-        textarea_(attributes) { value }
-      end
+      tag(:textarea, value, attributes)
     end
 
     def button(name, text, options = {})
       attributes = {:name => name}.merge(options)
-      tagz do
-        button_(attributes){text}
-      end
+      tag(:button, text, attributes)
     end
 
     def attributes(field, options = {})
@@ -137,33 +135,27 @@ module Mold
       end
     end
 
-    def extract_name(name_or_object, options)
-      return name if name = options[:name]
+    def name_and_object_from(object, options)
 
-      case name_or_object
+      case object
       when String, Symbol
-        name_or_object
+        name = object
+        object = nil
       else
-        ActiveSupport::Inflector.underscore(name_or_object.class.name).split('/').last
+        name = ActiveSupport::Inflector.underscore(object.class.name).split('/').last
       end
 
-    end
+      name   = options.getopt(:name,   default = name)
+      object = options.getopt(:object, default = object)
 
-    def extract_object(name_or_object, options)
-      return object if object = options[:object]
-
-      case name_or_object
-      when String, Symbol
-        nil
-      else
-        name_or_object
-      end
+      return name, object
     end
 
     protected
 
     def tag(*args, &block)
-      concat_content( Tagz.element.new(*args, &block) )
+      binding.haml_tag(*args, &block)
+      nil
     end
 
     def safe(output)

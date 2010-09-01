@@ -13,13 +13,15 @@
 
       = form.textarea :name
 
-      - form.nest bar.address do |address_form, address|
-        %p.street= address.street
-        =address_form.label :street
-        =address_form.input :street
+      %fieldset.address
+        - form.nest bar.address do |address_form, address|
+          %p.street= address.street
+          =address_form.label :street
+          =address_form.input :street
 
-      - form.nest_many bar.beers do |beer_form, beer|
-        %p.beer= beer.name
-        =beer_form.label :name
-        =beer_form.input :name
+      %fieldset.beers
+        - form.nest_many bar.beers do |beer_form, beer|
+          %p.beer= beer.name
+          =beer_form.label :name
+          =beer_form.input :name
 
