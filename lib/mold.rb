@@ -1,6 +1,7 @@
 
 $LOAD_PATH.unshift File.dirname(__FILE__)
 
+require 'mold/util'
 require 'mold/builder'
 require 'mold/helpers'
 

@@ -17,10 +17,15 @@ describe "Haml Template" do
       it_should_have_label_and_input(:name => "bar[name]",
                                      :id   => "bar_name")
 
+      p output
     end
 
     it 'should have other block-level elements' do
       output.should have_tag('form p.test')
+    end
+
+    it 'should handle whitespace in textarea correctly' do
+      output.should have_tag('textarea', :content => 'foobarbaz')
     end
 
   end
@@ -39,6 +44,10 @@ describe "Haml Template" do
 
     it 'should have other block-level elements' do
       output.should have_tag("form p.bar" , :content => @bar.name)
+    end
+
+    it 'should handle whitespace in textarea correctly' do
+      output.should have_tag('textarea', :content => @bar.name)
     end
 
     describe 'nest one' do

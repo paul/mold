@@ -24,16 +24,16 @@ module RenderHelpers
   end
 
   def render_haml(file)
-    render_template(file, :haml)
+    render_template(file, :haml, :format => :html5, :escape_html => true)
   end
 
   def render_erb(file)
     render_template(file, :erb)
   end
 
-  def render_template(file, format)
+  def render_template(file, format, options = {})
     file = File.join(File.dirname(__FILE__), 'fixtures', "#{file}.html.#{format}")
-    template = Tilt.new(file)
+    template = Tilt.new(file, options)
     @output = template.render(self)
   end
 

@@ -11,6 +11,8 @@
       = form.label :name
       = form.input :name
 
+      = form.textarea :name
+
       - form.nest bar.address do |address_form, address|
         %p.street= address.street
         =address_form.label :street

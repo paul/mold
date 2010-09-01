@@ -1,41 +1,38 @@
+require 'options'
 require 'tagz'
+
 require 'active_support/inflector/methods'
 
 module Mold
   class Builder
-    include Tagz
+    include Mold::Util
 
     attr_reader :name, :binding
 
-    def initialize(name_or_object, binding, options = {}, &block)
+    def initialize(binding, *args, &block)
       @binding = binding
 
-      @name = extract_name(name_or_object, options)
-      @object = extract_object(name_or_object, options)
+      args, options = Options.parse(args)
+
+      #@name = extract_name(name_or_object, options)
+      #@object = extract_object(name_or_object, options)
 
       @parent = options[:parent_builder]
       @code = block
 
-      form_id = "#{@name}_form"
-      @options = { :name => @name, :id => form_id, :method => "POST" }
+      #form_id = "#{@name}_form"
+      @options = { :method => "POST" }
       @options.merge!(options)
+      @options[:method] = @options[:method].to_s.upcase
     end
 
     def to_html
-
-      contents = capture_html(self, @object, &@code) if @code
-      contents = contents.join if contents.respond_to?(:join)
+      content = capture_html(self, @object, &@code) if @code
 
       if @parent.nil?
-        concat_content(
-          tagz do
-            form_(@options) do
-              contents
-            end
-          end
-        )
+        tag(:form, @options, content)
       else
-        concat_content(contents)
+        @code.call(self, @object) if @code
       end
     end
     alias to_s to_html
@@ -54,16 +51,12 @@ module Mold
 
     def label(field, text = field, options = {})
       attributes = options.dup.merge(:for => field_id(field))
-      tagz do
-        label_(attributes) { text }
-      end
+      tag(:label, attributes, text)
     end
 
     def input(field, options = {})
       attributes = attributes(field, options)
-      tagz do
-        input_(attributes)
-      end
+      tag(:input, attributes)
     end
 
     def select(field, choices = {}, options = {})
@@ -81,8 +74,8 @@ module Mold
     end
 
     def textarea(field, options = {})
-      value = options.delete(:value)
       attributes = attributes(field, options)
+      value = attributes.delete(:value)
       tagz do
         textarea_(attributes) { value }
       end
@@ -125,7 +118,11 @@ module Mold
     end
 
     def field_id(field)
-      "#{id_prefix}_#{field}"
+      if id_prefix
+        "#{id_prefix}_#{field}"
+      else
+        field
+      end
     end
 
     def id_prefix
@@ -165,6 +162,16 @@ module Mold
 
     protected
 
+    def tag(*args, &block)
+      concat_content( Tagz.element.new(*args, &block) )
+    end
+
+    def safe(output)
+      return output            if output.nil?
+      return output.html_safe  if defined?(ActiveSupport::SafeBuffer)
+      return output.html_safe! if output.respond_to?(:html_safe!)
+      output
+    end
 
     # These methods are stolen from SinatraMore
 
@@ -189,8 +196,9 @@ module Mold
       elsif has_erb_buffer?
         erb_concat(text)
       else # theres no template to concat, return the text directly
-        text
+        return text
       end
+      nil
     end
 
     # Retrieves content_blocks stored by content_for or within yield_content
