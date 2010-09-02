@@ -7,7 +7,7 @@ module Mold
   class Builder
     include Mold::Util
 
-    attr_reader :name, :binding
+    attr_reader :binding
 
     def initialize(binding, *args, &block)
       @binding = binding
@@ -27,16 +27,14 @@ module Mold
     end
 
     def to_html
-      content = capture_html(self, @object, &@code) if @code
-
       if @parent.nil?
-        capture_html do
-          tag(:form, @options) do
-            concat_content(content)
+        binding.capture_haml do
+          binding.haml_tag(:form, @options) do
+            binding.haml_concat(binding.capture_haml(self, @object, &@code))
           end
         end
       else
-        concat_content(content)
+        binding.capture_haml(self, @object, &@code)
       end
     end
     alias to_s to_html
@@ -50,7 +48,7 @@ module Mold
     def nest_many(objects, options = {}, &block)
       [objects].flatten.map do |object|
         nest(object, options.merge(:many => true), &block)
-      end
+      end.join
     end
 
     def label(field, text = field, options = {})
@@ -66,13 +64,12 @@ module Mold
     def select(field, choices = {}, options = {})
       selected_value = options.delete(:value)
       attributes = attributes(field, options)
-      tag(:select, attributes) do
-        choices.each do |value,text|
-          option_attributes = {:value => value}
-          option_attributes.merge!(:selected => :selected) if value == selected_value
-          tag(:option, text, option_attributes)
-        end
-      end
+      options = choices.map do |value,text|
+        option_attributes = {:value => value}
+        option_attributes.merge!(:selected => :selected) if value == selected_value
+        tag(:option, text, option_attributes)
+      end.join
+      tag(:select, options, attributes)
     end
 
     def textarea(field, options = {})
@@ -105,13 +102,13 @@ module Mold
 
     def name_prefix
       if @parent
-        prefix = "#{@parent.name_prefix}[#{name}]"
+        prefix = "#{@parent.name_prefix}[#{@name}]"
         if @options[:many]
           prefix << (@object && @object.respond_to?(:id) ? "[#{@object.id}]" : "[]")
         end
         prefix
       else
-        name
+        @name
       end
     end
 
@@ -125,13 +122,13 @@ module Mold
 
     def id_prefix
       if @parent
-        prefix = "#{@parent.id_prefix}_#{name}"
+        prefix = "#{@parent.id_prefix}_#{@name}"
         if @options[:many] && @object && @object.respond_to?(:id)
           prefix << "_#{@object.id}"
         end
         prefix
       else
-        name
+        @name
       end
     end
 
@@ -154,9 +151,11 @@ module Mold
     protected
 
     def tag(*args, &block)
-      binding.haml_tag(*args, &block)
-      nil
+      binding.capture_haml do
+        binding.haml_tag(*args, &block)
+      end
     end
+
 
     def safe(output)
       return output            if output.nil?

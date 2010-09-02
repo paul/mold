@@ -24,7 +24,7 @@ module RenderHelpers
   end
 
   def render_haml(file)
-    render_template(file, :haml, :format => :html5, :escape_html => true)
+    render_template(file, :haml, :format => :html5, :escape_html => false)
   end
 
   def render_erb(file)

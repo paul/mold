@@ -6,10 +6,12 @@
     %title Person Form
 
   %body
-    - mold :bar do |form|
+    = mold :bar do |form|
       %p.test Testing block
       = form.label :name
       = form.input :name
 
       = form.textarea :name, :value => "foobarbaz"
+
+      = form.select :owner, [[:paul, "Paul"]]
 

@@ -16,6 +16,7 @@ describe "Haml Template" do
       output.should have_tag('form')
       it_should_have_label_and_input(:name => "bar[name]",
                                      :id   => "bar_name")
+      puts output
 
     end
 
@@ -39,7 +40,6 @@ describe "Haml Template" do
       it_should_have_label_and_input(:name => "bar[name]",
                                      :id   => "bar_name")
 
-      puts output
     end
 
     it 'should have other block-level elements' do
