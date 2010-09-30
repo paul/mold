@@ -1,16 +1,12 @@
-
-$LOAD_PATH.unshift File.dirname(__FILE__)
-
-require 'mold/util'
-require 'mold/builder'
-require 'mold/helpers'
+require 'actionview'
+require 'mold/action_view_extensions/form_helper'
 
 module Mold
-  Version = VERSION = "0.2.0"
+  Version = VERSION = "0.3.0"
 
   def version
     Version
   end
 
-
+  autoload :FormBuilder, "mold/form_builder"
 end
